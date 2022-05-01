@@ -12,7 +12,7 @@ The integration will automatically refresh the list every night at midnight.  Th
 
 Check out the integration below:
 
-<img src="images/overlay.png" width="75%">
+<img src="images/overlay.png" width="50%">
 
 To learn more about the DHS CISA Known Exploited Vulnerabilities, please visit https://www.cisa.gov/known-exploited-vulnerabilities
 
