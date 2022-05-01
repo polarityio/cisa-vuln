@@ -116,7 +116,7 @@ function doLookup(entities, options, cb) {
 
   entities.forEach((entity) => {
     let searchResult = cveLookupMap.get(entity.value.toLowerCase());
-    Logger.info({ searchResult }, 'Search Result');
+    Logger.trace({ searchResult }, 'Search Result');
     if (searchResult) {
       lookupResults.push({
         entity,
