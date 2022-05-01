@@ -10,7 +10,7 @@ const EVERY_MIDNIGHT = '0 0 * * *';
 let requestDefault;
 let Logger;
 let cveLookupMap;
-
+let reloadRunning = false;
 
 function startup(logger) {
   return async function (cb) {
@@ -40,7 +40,7 @@ function startup(logger) {
 
     let requestCbDefault = requestCb.defaults(defaults);
     requestDefault = promisify(requestCbDefault);
-    
+
     try {
       await loadVulnList();
       schedule.scheduleJob(EVERY_MIDNIGHT, loadVulnList);
@@ -72,32 +72,36 @@ function RequestException(message, meta) {
 }
 
 async function loadVulnList() {
-  Logger.info('Loading Vulnerability List');
-  const requestOptions = {
-    uri: 'https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json',
-    json: true
-  };
+  reloadRunning = true;
+  try {
+    Logger.info('Loading Vulnerability List');
+    const requestOptions = {
+      uri: 'https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json',
+      json: true
+    };
 
-  const response = await requestDefault(requestOptions);
-  if (response.statusCode === 200 && Array.isArray(response.body.vulnerabilities)) {
-    cveLookupMap = new Map();
-    response.body.vulnerabilities.forEach((cve) => {
-      cveLookupMap.set(cve.cveID.toLowerCase(), cve);
-    });
-    Logger.info(`Finished loading ${cveLookupMap.size} CVEs`);
-  } else {
-    Logger.error({ response }, 'Unexpected HTTP Status Code');
-    throw new RequestException(`Unexpected status code ${response.statusCode} received`, response);
+    const response = await requestDefault(requestOptions);
+    if (response.statusCode === 200 && Array.isArray(response.body.vulnerabilities)) {
+      cveLookupMap = new Map();
+      response.body.vulnerabilities.forEach((cve) => {
+        cveLookupMap.set(cve.cveID.toLowerCase(), cve);
+      });
+      Logger.info(`Finished loading ${cveLookupMap.size} CVEs`);
+    } else {
+      Logger.error({ response }, 'Unexpected HTTP Status Code');
+      throw new RequestException(`Unexpected status code ${response.statusCode} received`, response);
+    }
+  } finally {
+    reloadRunning = false;
   }
 }
 
-
-function _getSummaryTags(searchResult){
+function _getSummaryTags(searchResult) {
   const tags = [];
   let vendor = searchResult.vendorProject;
   let product = searchResult.product;
 
-  if(product.toLowerCase().startsWith(vendor.toLowerCase())){
+  if (product.toLowerCase().startsWith(vendor.toLowerCase())) {
     tags.push(product);
   } else {
     tags.push(`${vendor} ${product}`);
@@ -105,6 +109,7 @@ function _getSummaryTags(searchResult){
 
   return tags;
 }
+
 /**
  *
  * @param entities
@@ -115,6 +120,19 @@ function doLookup(entities, options, cb) {
   let lookupResults = [];
 
   entities.forEach((entity) => {
+    if (reloadRunning) {
+      lookupResults.push({
+        entity,
+        data: {
+          summary: ['Temporarily unavailable. Retry search'],
+          details: {
+            reloadRunning: true
+          }
+        }
+      });
+      return;
+    }
+
     let searchResult = cveLookupMap.get(entity.value.toLowerCase());
     Logger.trace({ searchResult }, 'Search Result');
     if (searchResult) {
