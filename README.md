@@ -10,11 +10,13 @@ The integration requires network access to the CISA Known Vulnerability List ava
 
 The integration will automatically refresh the list every night at midnight.  The list is also reloaded any time the integration is restarted.
 
+To learn more about the DHS CISA Known Exploited Vulnerabilities, please visit https://www.cisa.gov/known-exploited-vulnerabilities
+
 Check out the integration below:
 
 <img src="images/overlay.png" width="50%">
 
-To learn more about the DHS CISA Known Exploited Vulnerabilities, please visit https://www.cisa.gov/known-exploited-vulnerabilities
+
 
 ## Installation Instructions
 
