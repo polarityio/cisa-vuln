@@ -1,0 +1,10 @@
+{
+  "main": "./integration.js",
+  "name": "CISAVuln",
+  "version": "3.0.0",
+  "private": true,
+  "dependencies": {
+    "postman-request": "^2.88.1-postman.31",
+    "node-schedule": "^2.1.0"
+  }
+}

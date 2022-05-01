@@ -1,0 +1,40 @@
+<a class="p-link" href="https://nvd.nist.gov/vuln/detail/{{block.entity.value}}">View in NIST National Vulnerability Database {{fa-icon icon="external-link-square" fixedWidth=true class="external-link"}}</a>
+<h1 class="p-title">
+  {{fa-icon "clipboard" fixedWidth=true}}  Summary
+</h1>
+<div>
+  DHS CISA has determined that there is reliable evidence that the vulnerability {{block.entity.value}} has been actively exploited in the wild and that there are clear remediation actions available.
+</div>
+<h1 class="p-title">
+  {{fa-icon "info" fixedWidth=true}}  Details
+</h1>
+<div>
+  <span class="p-key">Vulnerability Name:</span>
+  <span class="p-value">{{details.vulnerabilityName}}</span>
+</div>
+<div>
+  <span class="p-key">Vendor Project:</span>
+  <span class="p-value">{{details.vendorProject}}</span>
+</div>
+<div>
+  <span class="p-key">Product:</span>
+  <span class="p-value">{{details.product}}</span>
+</div>
+<div>
+  <span class="p-key">Date Added:</span>
+  <span class="p-value">{{details.dateAdded}}</span>
+</div>
+<div>
+  <span class="p-key">Due Date:</span>
+  <span class="p-value">{{details.dueDate}}</span>
+</div>
+<div>
+  <span class="p-key">Required Action:</span>
+  <span class="p-value">{{details.requiredAction}}</span>
+</div>
+<div>
+  <span class="p-key">Description:</span>
+  <div class="p-block">{{details.shortDescription}}</div>
+</div>
+
+
