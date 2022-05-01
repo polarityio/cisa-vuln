@@ -3,6 +3,7 @@
 const schedule = require('node-schedule');
 const requestCb = require('postman-request');
 const config = require('./config/config');
+const fs = require('fs');
 const { promisify } = require('util');
 
 const EVERY_MIDNIGHT = '0 0 * * *';
@@ -37,13 +38,9 @@ function startup(logger) {
       defaults.proxy = config.request.proxy;
     }
 
-    if (typeof config.request.rejectUnauthorized === 'boolean') {
-      defaults.rejectUnauthorized = config.request.rejectUnauthorized;
-    }
-
     let requestCbDefault = requestCb.defaults(defaults);
-
     requestDefault = promisify(requestCbDefault);
+    
     try {
       await loadVulnList();
       schedule.scheduleJob(EVERY_MIDNIGHT, loadVulnList);
@@ -63,7 +60,7 @@ function errorToPojo(err) {
       name: err.name,
       message: err.message,
       stack: err.stack,
-      detail: err.detail ? err.detail : 'Google compute engine had an error'
+      detail: err.detail ? err.detail : 'CISA Known Exploited Vulnerabilities integration had an error'
     };
   }
   return err;
