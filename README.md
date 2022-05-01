@@ -8,11 +8,11 @@ The Polarity - DHS CISA Known Exploited Vulnerabilities Integration returns info
 
 The integration requires network access to the CISA Known Vulnerability List available here: https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json
 
-The integration will automatically refresh the list every night at midnight.  The list is also reloaded anytime the integration is restarted.
+The integration will automatically refresh the list every night at midnight.  The list is also reloaded any time the integration is restarted.
 
 Check out the integration below:
 
-<img src="images/overlay.png">
+<img src="images/overlay.png" width="75%">
 
 To learn more about the DHS CISA Known Exploited Vulnerabilities, please visit https://www.cisa.gov/known-exploited-vulnerabilities
 
