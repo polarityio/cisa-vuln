@@ -94,6 +94,20 @@ async function loadVulnList() {
   }
 }
 
+
+function _getSummaryTags(searchResult){
+  const tags = [];
+  let vendor = searchResult.vendorProject;
+  let product = searchResult.product;
+
+  if(product.toLowerCase().startsWith(vendor.toLowerCase())){
+    tags.push(product);
+  } else {
+    tags.push(`${vendor} ${product}`);
+  }
+
+  return tags;
+}
 /**
  *
  * @param entities
@@ -110,10 +124,7 @@ function doLookup(entities, options, cb) {
       lookupResults.push({
         entity,
         data: {
-          summary: [{
-            type: 'danger',
-            text: searchResult.vendorProject
-          }],
+          summary: _getSummaryTags(searchResult),
           details: searchResult
         }
       });
