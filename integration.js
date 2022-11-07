@@ -11,44 +11,39 @@ let requestDefault;
 let Logger;
 let cveLookupMap;
 let reloadRunning = false;
+let reloadScheduled = false;
 
 function startup(logger) {
-  return async function (cb) {
-    Logger = logger;
+  Logger = logger;
 
-    let defaults = {};
+  let defaults = {};
 
-    if (typeof config.request.cert === 'string' && config.request.cert.length > 0) {
-      defaults.cert = fs.readFileSync(config.request.cert);
-    }
+  if (typeof config.request.cert === 'string' && config.request.cert.length > 0) {
+    defaults.cert = fs.readFileSync(config.request.cert);
+  }
 
-    if (typeof config.request.key === 'string' && config.request.key.length > 0) {
-      defaults.key = fs.readFileSync(config.request.key);
-    }
+  if (typeof config.request.key === 'string' && config.request.key.length > 0) {
+    defaults.key = fs.readFileSync(config.request.key);
+  }
 
-    if (typeof config.request.passphrase === 'string' && config.request.passphrase.length > 0) {
-      defaults.passphrase = config.request.passphrase;
-    }
+  if (typeof config.request.passphrase === 'string' && config.request.passphrase.length > 0) {
+    defaults.passphrase = config.request.passphrase;
+  }
 
-    if (typeof config.request.ca === 'string' && config.request.ca.length > 0) {
-      defaults.ca = fs.readFileSync(config.request.ca);
-    }
+  if (typeof config.request.ca === 'string' && config.request.ca.length > 0) {
+    defaults.ca = fs.readFileSync(config.request.ca);
+  }
 
-    if (typeof config.request.proxy === 'string' && config.request.proxy.length > 0) {
-      defaults.proxy = config.request.proxy;
-    }
+  if (typeof config.request.proxy === 'string' && config.request.proxy.length > 0) {
+    defaults.proxy = config.request.proxy;
+  }
 
-    let requestCbDefault = requestCb.defaults(defaults);
-    requestDefault = promisify(requestCbDefault);
+  if (typeof config.request.rejectUnauthorized === 'boolean') {
+    defaults.rejectUnauthorized = config.request.rejectUnauthorized;
+  }
 
-    try {
-      await loadVulnList();
-      schedule.scheduleJob(EVERY_MIDNIGHT, loadVulnList);
-    } catch (err) {
-      return cb(errorToPojo(err));
-    }
-    cb();
-  };
+  let requestCbDefault = requestCb.defaults(defaults);
+  requestDefault = promisify(requestCbDefault);
 }
 
 function errorToPojo(err) {
@@ -116,8 +111,18 @@ function _getSummaryTags(searchResult) {
  * @param options
  * @param cb
  */
-function doLookup(entities, options, cb) {
+async function doLookup(entities, options, cb) {
   let lookupResults = [];
+
+  if (reloadScheduled === false) {
+    try {
+      await loadVulnList();
+      schedule.scheduleJob(EVERY_MIDNIGHT, loadVulnList);
+      reloadScheduled = true;
+    } catch (err) {
+      return cb(errorToPojo(err));
+    }
+  }
 
   entities.forEach((entity) => {
     if (reloadRunning) {
