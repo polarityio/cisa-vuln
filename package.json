@@ -4,7 +4,7 @@
   "version": "3.0.4",
   "private": true,
   "dependencies": {
-    "postman-request": "^2.88.1-postman.31",
-    "node-schedule": "^2.1.0"
+    "postman-request": "^2.88.1-postman.32",
+    "node-schedule": "^2.1.1"
   }
 }
