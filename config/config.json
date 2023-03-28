@@ -1,4 +1,5 @@
 {
+  "polarityIntegrationUuid": "fdc7efc0-cce1-11ed-aeee-075d3490155d",
   "name": "CISA Known Exploited Vulnerabilities",
   "acronym": "CISA",
   "description": "Search the DHS CISA catalog of known exploited vulnerabilities by CVE",
